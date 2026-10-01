@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Proyectos Jota M. Guisao Tabares</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563EB">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Portal Jota M. Guisao">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --navy: #1E293B;
+      --teal: #2563EB;
+      --gold: #60A5FA;
+      --dark-bg: #0F172A;
+      --card-bg: #2d2d35;
+      --text-primary: #ffffff;
+      --text-secondary: #aaa;
+      --border-color: #404050;
+    }
+
+    body.light-mode {
+      --dark-bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --border-color: #e0e0e0;
+    }
+    
+    html, body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 2px solid var(--teal);
+      color: var(--teal);
+      font-size: 18px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--teal);
+      color: white;
+    }
+    
+    .navbar {
+      background: var(--card-bg);
+      border-bottom: 3px solid var(--teal);
+      padding: 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logo-section img {
+      height: 45px;
+      width: auto;
+    }
+    
+    .brand {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 0.7rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background: var(--teal);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    
+    .btn-secondary {
+      background: var(--navy);
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: var(--teal);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 0.5rem;
+      color: var(--teal);
+    }
+    
+    .header p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    .filtros {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .filtro-grupo {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .filtro-grupo label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    
+    .filtro-grupo select {
+      padding: 0.6rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    
+    .proyectos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .proyecto-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--teal);
+      border-radius: 8px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .proyecto-card:hover {
+      box-shadow: 0 8px 24px rgba(54, 203, 207, 0.15);
+      transform: translateY(-4px);
+    }
+    
+    .proyecto-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      gap: 0.75rem;
+    }
+    
+    .proyecto-titulo {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    
+    .badge {
+      font-size: 10px;
+      padding: 0.3rem 0.6rem;
+      border-radius: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    
+    .badge-categoria {
+      background: rgba(54, 203, 207, 0.15);
+      color: var(--teal);
+    }
+    
+    .badge-estado {
+      background: rgba(247, 204, 1, 0.15);
+      color: var(--gold);
+    }
+    
+    .proyecto-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+    
+    .proyecto-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+    }
+    
+    .proyecto-acciones {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn-small {
+      flex: 1;
+      padding: 0.5rem;
+      font-size: 11px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .btn-small:hover {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    
+    .btn-delete {
+      background: #ff6b6b;
+    }
+    
+    .btn-delete:hover {
+      background: #ff5252;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: 8px;
+      border-left: 4px solid var(--teal);
+      max-width: 600px;
+      width: 100%;
+      padding: 2rem;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal-close {
+      float: right;
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+    
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      clear: both;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+    }
+    
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--dark-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    
+    .logo-dropzone {
+      border: 2px dashed var(--teal);
+      border-radius: 8px;
+      padding: 1rem 0.75rem;
+      text-align: center;
+      background: rgba(54, 203, 207, 0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .logo-dropzone:hover {
+      background: rgba(54, 203, 207, 0.1);
+      border-color: var(--gold);
+    }
+    
+    .logo-dropzone input {
+      display: none;
+    }
+    
+    .logo-preview {
+      margin-top: 0.5rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+    
+    .logo-preview img {
+      max-height: 70px;
+      max-width: 70px;
+      height: auto;
+      width: auto;
+      border-radius: 6px;
+      object-fit: contain;
+      display: block;
+    }
+
+    #btnBorrarLogo {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      display: none;
+    }
+
+    #btnBorrarLogo:hover {
+      background: #ff5252;
+    }
+
+    .btn-pdf {
+      background: #4CAF50;
+    }
+
+    .btn-pdf:hover {
+      background: #45a049;
+      color: white;
+    }
+
+    .btn-print {
+      background: #2196F3;
+    }
+
+    .btn-print:hover {
+      background: #0b7dda;
+      color: white;
+    }
+    
+    .file-upload {
+      border: 2px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      background: rgba(54, 203, 207, 0.05);
+      cursor: pointer;
+    }
+    
+    .file-upload input {
+      display: none;
+    }
+    
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: rgba(54, 203, 207, 0.05);
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      font-size: 12px;
+    }
+    
+    .file-remove {
+      background: none;
+      border: none;
+      color: #ff6b6b;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-secondary);
+    }
+    
+    .empty-state p {
+      font-size: 14px;
+      margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .logo-section {
+        justify-content: center;
+      }
+      
+      .nav-buttons {
+        justify-content: center;
+      }
+      
+      .proyectos-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-content {
+        padding: 1.5rem;
+      }
+      
+      .header h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="lockScreen" style="position:fixed; inset:0; z-index:99999; background:#0F172A; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:20px;">
+    <div style="max-width:340px; width:100%; text-align:center;">
+      <div style="font-size:52px; margin-bottom:10px;">🔒</div>
+      <h2 id="lockTitle" style="color:#fff; font-family:sans-serif; margin-bottom:6px;">Portal Proyectos Jota M. Guisao Tabares</h2>
+      <p id="lockSubtitle" style="color:#aaa; font-family:sans-serif; font-size:13px; margin-bottom:20px;">Ingresa tu contraseña para continuar</p>
+
+      <input type="password" id="lockPasswordInput" placeholder="Contraseña" style="width:100%; padding:12px; border-radius:8px; border:1px solid #404050; background:#2d2d35; color:#fff; font-size:15px; margin-bottom:10px; box-sizing:border-box;">
+      <input type="password" id="lockPasswordConfirm" placeholder="Confirma tu contraseña" style="display:none; width:100%; padding:12px; border-radius:8px; border:1px solid #404050; background:#2d2d35; color:#fff; font-size:15px; margin-bottom:10px; box-sizing:border-box;">
+
+      <p id="lockError" style="color:#ff6b6b; font-family:sans-serif; font-size:13px; min-height:18px; margin-bottom:10px;"></p>
+
+      <button id="lockActionBtn" onclick="manejarAccionCandado()" style="width:100%; padding:12px; border-radius:8px; border:none; background:#2563EB; color:#fff; font-size:15px; cursor:pointer; font-family:sans-serif; margin-bottom:14px;">Entrar</button>
+
+      <a href="#" id="lockForgotLink" onclick="olvidoContrasena(); return false;" style="color:#36CBCF; font-family:sans-serif; font-size:12px; text-decoration:none;">¿Olvidaste tu contraseña?</a>
+    </div>
+  </div>
+
+  <div class="navbar">
+    <div class="logo-section">
+      <div>
+        <div class="brand">Portal Proyectos</div>
+        <div style="font-size: 11px; color: var(--text-secondary);">Jota M. Guisao Tabares</div>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌙</button>
+      <button class="btn btn-secondary" onclick="nuevoProyecto()">➕ Nuevo</button>
+      <button class="btn btn-secondary" onclick="exportarJSON()" title="Descarga un archivo de respaldo con todos tus proyectos">💾 Exportar respaldo</button>
+      <input type="file" id="importFile" accept="application/json,.json,text/plain,text/json" style="display:none">
+      <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" title="Carga un respaldo exportado antes, en este u otro dispositivo">📂 Importar respaldo</button>
+      <button class="btn btn-secondary" onclick="cambiarContrasena()" title="Cambiar tu contraseña de acceso">🔑 Cambiar contraseña</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1>Mis Proyectos</h1>
+      <p>Gestiona todos tus proyectos, tareas y archivos en un solo lugar</p>
+    </div>
+
+    <div class="filtros">
+      <div class="filtro-grupo">
+        <label>Categoría</label>
+        <select id="filtroCategoria" onchange="filtrarProyectos()">
+          <option value="">Todas</option>
+          <option value="Producción Audiovisual">Producción Audiovisual</option>
+          <option value="Diseño & Branding">Diseño & Branding</option>
+          <option value="Asesoría Externa">Asesoría Externa</option>
+          <option value="Formación & Estudio">Formación & Estudio</option>
+          <option value="Proyectos Personales">Proyectos Personales</option>
+        </select>
+      </div>
+      <div class="filtro-grupo">
+        <label>Estado</label>
+        <select id="filtroEstado" onchange="filtrarProyectos()">
+          <option value="">Todos</option>
+          <option value="En Idea">En Idea</option>
+          <option value="En Progreso">En Progreso</option>
+          <option value="En Pausa">En Pausa</option>
+          <option value="Completado">Completado</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="proyectos-grid" id="proyectosGrid">
+    </div>
+    <div style="text-align:center; padding: 24px 10px 10px; opacity:0.5; font-size:11px; font-family:sans-serif; color: var(--text-secondary);">Creada por CreaterLab · Laboratorio de Ideas</div>
+  </div>
+
+  <!-- MODAL EDICIÓN/NUEVO PROYECTO -->
+  <div class="modal" id="modalProyecto">
+    <div class="modal-content">
+      <button class="modal-close" onclick="cerrarModal()">×</button>
+      <h2 id="modalTitulo" style="margin-bottom: 1.5rem; color: var(--teal);">Nuevo Proyecto</h2>
+      
+      <form id="formProyecto" onsubmit="guardarProyecto(event)">
+        <!-- LOGO -->
+        <div class="form-group">
+          <label>Logo/Imagen</label>
+          <div class="logo-dropzone" id="logoDropzone" ondrop="handleLogoDrop(event)" ondragover="event.preventDefault()" ondragenter="event.preventDefault()" onclick="document.getElementById('logoFile').click()">
+            <input type="file" id="logoFile" accept="image/*" onchange="cargarLogo()">
+            <div id="logoTexto">📤 Arrastra tu logo aquí o haz click</div>
+            <div class="logo-preview" id="logoPreview"></div>
+          </div>
+          <button type="button" id="btnBorrarLogo" onclick="borrarLogo()">🗑️ Eliminar Logo</button>
+        </div>
+
+        <!-- NOMBRE Y CATEGORÍA -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre del Proyecto *</label>
+            <input type="text" id="proyectoNombre" required>
+          </div>
+          <div class="form-group">
+            <label>Categoría *</label>
+            <select id="proyectoCategoria" required>
+              <option value="">Selecciona categoría</option>
+              <option value="Producción Audiovisual">Producción Audiovisual</option>
+              <option value="Diseño & Branding">Diseño & Branding</option>
+              <option value="Asesoría Externa">Asesoría Externa</option>
+              <option value="Formación & Estudio">Formación & Estudio</option>
+              <option value="Proyectos Personales">Proyectos Personales</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- DESCRIPCIÓN -->
+        <div class="form-group">
+          <label>Descripción *</label>
+          <textarea id="proyectoDesc" required></textarea>
+        </div>
+
+        <!-- VISIÓN, MISIÓN, OBJETIVOS -->
+        <div class="form-group">
+          <label>Visión</label>
+          <textarea id="proyectoVision" placeholder="¿Cuál es la visión a largo plazo?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Misión</label>
+          <textarea id="proyectoMision" placeholder="¿Cuál es la misión del proyecto?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Objetivos</label>
+          <textarea id="proyectoObjetivos" placeholder="¿Cuáles son los objetivos específicos?"></textarea>
+        </div>
+
+        <!-- FECHAS Y ESTADO -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fecha de Inicio</label>
+            <input type="date" id="proyectoFechaInicio">
+          </div>
+          <div class="form-group">
+            <label>Fecha de Entrega</label>
+            <input type="date" id="proyectoFechaEntrega">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Estado *</label>
+            <select id="proyectoEstado" required>
+              <option value="">Selecciona estado</option>
+              <option value="En Idea">En Idea</option>
+              <option value="En Progreso">En Progreso</option>
+              <option value="En Pausa">En Pausa</option>
+              <option value="Completado">Completado</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Prioridad</label>
+            <select id="proyectoPrioridad">
+              <option value="Media">Media</option>
+              <option value="Alta">Alta</option>
+              <option value="Baja">Baja</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- TAREAS -->
+        <div class="form-group">
+          <label>Tareas (una por línea)</label>
+          <textarea id="proyectoTareas" placeholder="Tarea 1&#10;Tarea 2&#10;Tarea 3"></textarea>
+        </div>
+
+        <!-- ARCHIVOS -->
+        <div class="form-group">
+          <label>Archivos Adjuntos</label>
+          <div class="file-upload" ondrop="handleFilesDrop(event)" ondragover="event.preventDefault()" ondragenter="event.preventDefault()" onclick="document.getElementById('archivoUpload').click()">
+            <input type="file" id="archivoUpload" multiple onchange="agregarArchivos()">
+            <div>📎 Arrastra archivos aquí o haz click</div>
+          </div>
+          <div id="listaArchivos" style="margin-top: 1rem;"></div>
+        </div>
+
+        <!-- BOTONES -->
+        <div style="display: flex; gap: 1rem;">
+          <button type="submit" class="btn btn-primary" style="flex: 1;">Guardar Proyecto</button>
+          <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="cerrarModal()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL PARA VER DOCUMENTOS -->
+  <div class="modal" id="modalDocumento" style="display: none;">
+    <div class="modal-content" style="max-width: 90%; height: 90vh; display: flex; flex-direction: column;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">
+        <h2 style="margin: 0; flex: 1;" id="tituloDocumento">Documento</h2>
+        <button type="button" class="btn btn-secondary" id="btnEliminarDocumento" onclick="eliminarArchivoDesdeVisor()" style="display:none; padding: 0.5rem 1rem; color:#f44336; border-color:#f44336; margin-right:0.5rem;">🗑️ Eliminar</button>
+        <button type="button" class="btn btn-secondary" onclick="cerrarDocumento()" style="padding: 0.5rem 1rem;">✕ Cerrar</button>
+      </div>
+      <div id="visorDocumento" style="flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; background: #f5f5f5;">
+        Cargando...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== CANDADO DE ACCESO (contraseña local, para evitar que cualquiera abra el Portal en este PC) =====
+    const PW_KEY = 'jotam_portal_pwhash';
+
+    async function sha256(texto) {
+      const enc = new TextEncoder().encode(texto);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', enc);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function modoLock() {
+      return localStorage.getItem(PW_KEY) ? 'entrar' : 'crear';
+    }
+
+    function pintarPantallaLock() {
+      const confirmar = document.getElementById('lockPasswordConfirm');
+      const subt = document.getElementById('lockSubtitle');
+      const btn = document.getElementById('lockActionBtn');
+      const olvido = document.getElementById('lockForgotLink');
+      if (modoLock() === 'crear') {
+        subt.textContent = 'Crea una contraseña para proteger tus proyectos en este computador';
+        confirmar.style.display = 'block';
+        btn.textContent = 'Crear contraseña y entrar';
+        olvido.style.display = 'none';
+      } else {
+        subt.textContent = 'Ingresa tu contraseña para continuar';
+        confirmar.style.display = 'none';
+        btn.textContent = 'Entrar';
+        olvido.style.display = 'inline-block';
+      }
+      document.getElementById('lockPasswordInput').value = '';
+      confirmar.value = '';
+      document.getElementById('lockError').textContent = '';
+    }
+
+    async function manejarAccionCandado() {
+      const pass = document.getElementById('lockPasswordInput').value;
+      const errorEl = document.getElementById('lockError');
+
+      if (modoLock() === 'crear') {
+        const confirmar = document.getElementById('lockPasswordConfirm').value;
+        if (!pass || pass.length < 4) {
+          errorEl.textContent = 'La contraseña debe tener al menos 4 caracteres.';
+          return;
+        }
+        if (pass !== confirmar) {
+          errorEl.textContent = 'Las contraseñas no coinciden.';
+          return;
+        }
+        localStorage.setItem(PW_KEY, await sha256(pass));
+        desbloquearApp();
+      } else {
+        const hashGuardado = localStorage.getItem(PW_KEY);
+        const hashIngresado = await sha256(pass);
+        if (hashIngresado === hashGuardado) {
+          desbloquearApp();
+        } else {
+          errorEl.textContent = 'Contraseña incorrecta. Intenta de nuevo.';
+        }
+      }
+    }
+
+    function desbloquearApp() {
+      document.getElementById('lockScreen').style.display = 'none';
+    }
+
+    function olvidoContrasena() {
+      const ok = confirm('Esto borra la contraseña actual (no borra tus proyectos). Tendrás que crear una nueva. ¿Continuar?');
+      if (ok) {
+        localStorage.removeItem(PW_KEY);
+        pintarPantallaLock();
+      }
+    }
+
+    async function cambiarContrasena() {
+      const actual = prompt('Escribe tu contraseña actual:');
+      if (actual === null) return;
+      const hashActual = await sha256(actual);
+      if (hashActual !== localStorage.getItem(PW_KEY)) {
+        alert('❌ La contraseña actual no es correcta.');
+        return;
+      }
+      const nueva = prompt('Escribe tu nueva contraseña (mínimo 4 caracteres):');
+      if (nueva === null) return;
+      if (nueva.length < 4) {
+        alert('❌ La nueva contraseña debe tener al menos 4 caracteres.');
+        return;
+      }
+      const confirmar = prompt('Confirma tu nueva contraseña:');
+      if (nueva !== confirmar) {
+        alert('❌ Las contraseñas no coinciden.');
+        return;
+      }
+      localStorage.setItem(PW_KEY, await sha256(nueva));
+      alert('✅ Contraseña actualizada correctamente.');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      pintarPantallaLock();
+      ['lockPasswordInput', 'lockPasswordConfirm'].forEach(id => {
+        document.getElementById(id).addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') manejarAccionCandado();
+        });
+      });
+    });
+
+    // ===== ALMACENAMIENTO: IndexedDB (mucho más espacio que localStorage, ideal para archivos adjuntos) =====
+    const DB_NAME = 'jotam_portal_db';
+    const STORE_NAME = 'proyectos_store';
+    let dbPromise = null;
+
+    function abrirDB() {
+      if (dbPromise) return dbPromise;
+      dbPromise = new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME);
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+      return dbPromise;
+    }
+
+    async function idbGetProyectos() {
+      try {
+        const db = await abrirDB();
+        return await new Promise((resolve, reject) => {
+          const tx = db.transaction(STORE_NAME, 'readonly');
+          const req = tx.objectStore(STORE_NAME).get('proyectos');
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => reject(req.error);
+        });
+      } catch (e) {
+        console.error('No se pudo leer de IndexedDB:', e);
+        return null;
+      }
+    }
+
+    async function idbSetProyectos(data) {
+      const db = await abrirDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        tx.objectStore(STORE_NAME).put(data, 'proyectos');
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    // Guarda los proyectos y avisa con claridad si algo sale mal (nunca falla en silencio)
+    async function guardarProyectosEnDisco() {
+      try {
+        await idbSetProyectos(proyectos);
+        return true;
+      } catch (e) {
+        console.error('Error guardando proyectos:', e);
+        alert('⚠️ No se pudo guardar. Es posible que el navegador se haya quedado sin espacio. Intenta eliminar un archivo adjunto pesado o un proyecto viejo y vuelve a intentar.');
+        return false;
+      }
+    }
+
+    // TEMA CLARO/OSCURO
+    document.addEventListener('DOMContentLoaded', function() {
+      const temaGuardado = localStorage.getItem('jotam_tema') || 'dark';
+      if (temaGuardado === 'light') {
+        document.body.classList.add('light-mode');
+        document.getElementById('themeToggle').textContent = '☀️';
+      }
+
+      document.getElementById('themeToggle').addEventListener('click', function() {
+        document.body.classList.toggle('light-mode');
+        if (document.body.classList.contains('light-mode')) {
+          this.textContent = '☀️';
+          localStorage.setItem('jotam_tema', 'light');
+        } else {
+          this.textContent = '🌙';
+          localStorage.setItem('jotam_tema', 'dark');
+        }
+      });
+    });
+
+    let proyectos = [];
+    let proyectoEditando = null;
+    let archivosTemporales = [];
+    let logoTemporalBase64 = '';
+
+    // Cargar datos al iniciar (IndexedDB)
+    window.addEventListener('load', async () => {
+      try {
+        const guardadoIDB = await idbGetProyectos();
+        if (guardadoIDB) {
+          proyectos = guardadoIDB;
+        }
+      } catch(e) {
+        console.error('Error cargando proyectos:', e);
+      }
+      mostrarProyectos();
+    });
+
+    // IMPORTAR JSON
+    document.getElementById('importFile').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          try {
+            const datos = JSON.parse(event.target.result);
+            if (datos.proyectos) {
+              if (proyectos.length > 0) {
+                const seguro = confirm(`Ya tienes ${proyectos.length} proyecto(s) guardado(s) aquí. Importar este respaldo (con ${datos.proyectos.length} proyecto(s)) va a REEMPLAZARLOS a todos. ¿Continuar?`);
+                if (!seguro) { e.target.value = ''; return; }
+              }
+              proyectos = datos.proyectos;
+              const ok = await guardarProyectosEnDisco();
+              mostrarProyectos();
+              if (ok) alert('✅ Proyectos importados correctamente');
+            } else {
+              alert('❌ Este archivo no tiene el formato esperado de un respaldo de CreaterLab.');
+            }
+          } catch (err) {
+            alert('❌ Error al leer el archivo JSON');
+          }
+        };
+        reader.readAsText(file);
+      }
+      e.target.value = '';
+    });
+
+    // EXPORTAR JSON
+    function exportarJSON() {
+      const datos = {
+        usuario: "Elsa Osuna",
+        nombre_estudio: "CreaterLab",
+        fecha_exportacion: new Date().toISOString(),
+        proyectos: proyectos
+      };
+      
+      const jsonString = JSON.stringify(datos, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `CreaterLab-Proyectos-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // NUEVO PROYECTO
+    function nuevoProyecto() {
+      proyectoEditando = null;
+      logoTemporalBase64 = '';
+      document.getElementById('modalTitulo').textContent = 'Nuevo Proyecto';
+      document.getElementById('formProyecto').reset();
+      archivosTemporales = [];
+      document.getElementById('listaArchivos').innerHTML = '';
+      document.getElementById('logoPreview').innerHTML = '';
+      document.getElementById('logoTexto').style.display = 'block';
+      document.getElementById('btnBorrarLogo').style.display = 'none';
+      document.getElementById('modalProyecto').classList.add('active');
+    }
+
+    // EDITAR PROYECTO
+    function editarProyecto(id) {
+      proyectoEditando = proyectos.find(p => p.id === id);
+      if (!proyectoEditando) return;
+
+      logoTemporalBase64 = proyectoEditando.logo || '';
+      document.getElementById('modalTitulo').textContent = 'Editar Proyecto';
+      document.getElementById('proyectoNombre').value = proyectoEditando.titulo;
+      document.getElementById('proyectoCategoria').value = proyectoEditando.categoria;
+      document.getElementById('proyectoDesc').value = proyectoEditando.descripcion;
+      document.getElementById('proyectoVision').value = proyectoEditando.vision || '';
+      document.getElementById('proyectoMision').value = proyectoEditando.mision || '';
+      document.getElementById('proyectoObjetivos').value = proyectoEditando.objetivos || '';
+      document.getElementById('proyectoFechaInicio').value = proyectoEditando.fecha_inicio || '';
+      document.getElementById('proyectoFechaEntrega').value = proyectoEditando.fecha_entrega || '';
+      document.getElementById('proyectoEstado').value = proyectoEditando.estado;
+      document.getElementById('proyectoPrioridad').value = proyectoEditando.prioridad || 'Media';
+      document.getElementById('proyectoTareas').value = proyectoEditando.checklist.map(t => t.tarea).join('\n');
+
+      if (proyectoEditando.logo) {
+        document.getElementById('logoPreview').innerHTML = `<img src="${proyectoEditando.logo}" alt="logo" style="max-height: 70px; max-width: 70px; object-fit: contain;">`;
+        document.getElementById('logoTexto').style.display = 'none';
+        document.getElementById('btnBorrarLogo').style.display = 'block';
+      } else {
+        document.getElementById('logoPreview').innerHTML = '';
+        document.getElementById('logoTexto').style.display = 'block';
+        document.getElementById('btnBorrarLogo').style.display = 'none';
+      }
+
+      archivosTemporales = [...(proyectoEditando.archivos || [])];
+      mostrarArchivosTemporales();
+
+      document.getElementById('modalProyecto').classList.add('active');
+    }
+
+    // CARGAR LOGO
+    function cargarLogo() {
+      const file = document.getElementById('logoFile').files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          logoTemporalBase64 = e.target.result;
+          document.getElementById('logoPreview').innerHTML = `<img src="${e.target.result}" alt="logo" style="max-height: 70px; max-width: 70px; object-fit: contain;">`;
+          document.getElementById('logoTexto').style.display = 'none';
+          document.getElementById('btnBorrarLogo').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // BORRAR LOGO
+    function borrarLogo() {
+      logoTemporalBase64 = '';
+      document.getElementById('logoFile').value = '';
+      document.getElementById('logoPreview').innerHTML = '';
+      document.getElementById('logoTexto').style.display = 'block';
+      document.getElementById('btnBorrarLogo').style.display = 'none';
+    }
+
+    // DRAG & DROP LOGO
+    function handleLogoDrop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const files = e.dataTransfer.files;
+      if (files[0] && files[0].type.startsWith('image/')) {
+        document.getElementById('logoFile').files = files;
+        cargarLogo();
+      }
+    }
+
+    // DRAG & DROP ARCHIVOS
+    function handleFilesDrop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const files = e.dataTransfer.files;
+      Array.from(files).forEach(file => {
+        if (!archivosTemporales.find(a => a.nombre_archivo === file.name)) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            archivosTemporales.push({
+              nombre_archivo: file.name,
+              tipo: file.type,
+              contenido: ev.target.result,
+              fecha_carga: new Date().toISOString().split('T')[0]
+            });
+            mostrarArchivosTemporales();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // AGREGAR ARCHIVOS
+    function agregarArchivos() {
+      const files = document.getElementById('archivoUpload').files;
+      Array.from(files).forEach(file => {
+        if (!archivosTemporales.find(a => a.nombre_archivo === file.name)) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            archivosTemporales.push({
+              nombre_archivo: file.name,
+              tipo: file.type,
+              contenido: e.target.result,
+              fecha_carga: new Date().toISOString().split('T')[0]
+            });
+            mostrarArchivosTemporales();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      document.getElementById('archivoUpload').value = '';
+    }
+
+    function mostrarArchivosTemporales() {
+      const lista = document.getElementById('listaArchivos');
+      lista.innerHTML = archivosTemporales.map((arch, idx) => {
+        let icono = '📄';
+        if (arch.tipo.includes('pdf')) icono = '📕';
+        if (arch.tipo.includes('word') || arch.tipo.includes('document')) icono = '📘';
+        if (arch.tipo.includes('image')) icono = '🖼️';
+        
+        return `
+          <div class="file-item" style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem; background: #f9f9f9; border-radius: 6px; margin-bottom: 0.5rem; border-left: 3px solid #36CBCF;">
+            <button type="button" style="all: unset; flex: 1; cursor: pointer; text-align: left; color: #333; font-size: 14px;" onclick="abrirDocumento(${idx})">
+              ${icono} ${arch.nombre_archivo}
+            </button>
+            <button type="button" class="file-remove" onclick="removerArchivo(${idx})" style="background: none; border: none; color: #f44336; cursor: pointer; font-size: 18px; padding: 0.5rem;">✕</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function removerArchivo(idx) {
+      archivosTemporales.splice(idx, 1);
+      mostrarArchivosTemporales();
+    }
+
+    let contextoArchivoActual = null;
+
+    async function eliminarArchivoDesdeVisor() {
+      if (!contextoArchivoActual) return;
+      const { proyectoId, archivoIdx } = contextoArchivoActual;
+      const proyecto = proyectos.find(p => p.id === proyectoId);
+      if (!proyecto || !proyecto.archivos) return;
+
+      if (!confirm('¿Eliminar este archivo del proyecto? Esta acción no se puede deshacer.')) return;
+
+      const respaldo = proyecto.archivos;
+      proyecto.archivos = proyecto.archivos.filter((_, i) => i !== archivoIdx);
+      const ok = await guardarProyectosEnDisco();
+      if (ok) {
+        cerrarDocumento();
+        mostrarProyectos();
+      } else {
+        proyecto.archivos = respaldo;
+      }
+    }
+
+    // Detecta el tipo real de archivo, usando el nombre como respaldo si el navegador no reportó bien el tipo
+    function tipoDeArchivo(archivo) {
+      const tipo = (archivo.tipo || '').toLowerCase();
+      const nombre = (archivo.nombre_archivo || '').toLowerCase();
+      if (tipo.includes('pdf') || nombre.endsWith('.pdf')) return 'pdf';
+      if (tipo.includes('image') || /\.(png|jpe?g|gif|webp|svg)$/.test(nombre)) return 'image';
+      if (tipo.includes('word') || tipo.includes('document') || /\.(docx?|odt)$/.test(nombre)) return 'word';
+      return 'otro';
+    }
+
+    // Convierte un archivo guardado (data URL) en una URL liviana que el navegador maneja sin límite de peso
+    let ultimaBlobURL = null;
+    function obtenerURLVisualizable(archivo) {
+      if (!archivo.contenido || !archivo.contenido.startsWith('data:')) return null;
+      try {
+        const [encabezado, base64] = archivo.contenido.split(',');
+        const tipoMime = encabezado.match(/data:(.*?);base64/)?.[1] || archivo.tipo || 'application/octet-stream';
+        const binario = atob(base64);
+        const bytes = new Uint8Array(binario.length);
+        for (let i = 0; i < binario.length; i++) bytes[i] = binario.charCodeAt(i);
+        const blob = new Blob([bytes], { type: tipoMime });
+        if (ultimaBlobURL) URL.revokeObjectURL(ultimaBlobURL);
+        ultimaBlobURL = URL.createObjectURL(blob);
+        return ultimaBlobURL;
+      } catch (e) {
+        console.error('No se pudo convertir el archivo a Blob:', e);
+        return null;
+      }
+    }
+
+    function abrirDocumento(idx) {
+      const archivo = archivosTemporales[idx];
+      if (!archivo) return;
+      contextoArchivoActual = null;
+      document.getElementById('btnEliminarDocumento').style.display = 'none';
+
+      document.getElementById('tituloDocumento').textContent = archivo.nombre_archivo;
+      const visor = document.getElementById('visorDocumento');
+      const modal = document.getElementById('modalDocumento');
+      const tipo = tipoDeArchivo(archivo);
+      const tieneContenido = archivo.contenido && archivo.contenido.startsWith('data:');
+      const urlLigera = tieneContenido ? obtenerURLVisualizable(archivo) : null;
+      const btnNuevaPestana = urlLigera ? `<a href="${urlLigera}" target="_blank" rel="noopener" class="btn btn-secondary" style="display: inline-block; margin-top: 0.6rem; text-decoration: none;">↗️ Abrir en pestaña nueva</a>` : '';
+
+      if (tipo === 'pdf') {
+        // PDFs - intentar mostrar en iframe primero
+        if (urlLigera) {
+          visor.innerHTML = '<div style="width:100%; height:100%; display:flex; flex-direction:column;"><iframe src="' + urlLigera + '" style="width: 100%; flex:1; border: none;"></iframe><div style="text-align:center; padding:0.5rem; background:#fff;">' + btnNuevaPestana + '</div></div>';
+        } else {
+          visor.innerHTML = `
+            <div style="text-align: center; padding: 2rem; background: white; border-radius: 8px;">
+              <div style="font-size: 48px; margin-bottom: 1rem;">⚠️</div>
+              <div style="font-size: 14px; margin-bottom: 1rem; color: #666;">Este archivo quedó guardado sin su contenido</div>
+              <p style="margin: 0; color: #999; font-size: 12px; max-width: 320px;">Esto pasa con archivos subidos arrastrándolos antes de una mejora reciente. Quítalo de la lista y vuelve a subirlo — así queda funcionando bien.</p>
+            </div>
+          `;
+        }
+      } else if (tipo === 'image') {
+        if (urlLigera) {
+          visor.innerHTML = '<img src="' + urlLigera + '" style="max-width: 100%; max-height: 100%; object-fit: contain;">';
+        } else {
+          visor.innerHTML = '<p style="text-align: center; color: #999;">⚠️ Esta imagen quedó guardada sin su contenido. Quítala de la lista y vuelve a subirla.</p>';
+        }
+      } else if (tipo === 'word') {
+        visor.innerHTML = `
+          <div style="text-align: center; padding: 2rem; background: white; border-radius: 8px;">
+            <div style="font-size: 48px; margin-bottom: 1rem;">📘</div>
+            <div style="font-size: 14px; margin-bottom: 1rem; color: #666;">Documento Word</div>
+            <p style="margin: 0; color: #999; font-size: 12px;">Los documentos Word no se pueden visualizar directamente aquí.</p>
+            <button type="button" class="btn btn-primary" onclick="descargarArchivo(${idx})" style="margin-top: 1rem;">⬇️ Descargar archivo</button>
+          </div>
+        `;
+      } else {
+        visor.innerHTML = `
+          <div style="text-align: center; padding: 2rem; background: white; border-radius: 8px;">
+            <div style="font-size: 48px; margin-bottom: 1rem;">📄</div>
+            <div style="font-size: 14px; margin-bottom: 1rem; color: #666;">${archivo.tipo}</div>
+            <p style="margin: 0; color: #999; font-size: 12px;">Este tipo de archivo no se puede visualizar aquí.</p>
+            <button type="button" class="btn btn-primary" onclick="descargarArchivo(${idx})" style="margin-top: 1rem;">⬇️ Descargar archivo</button>
+          </div>
+        `;
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function cerrarDocumento() {
+      document.getElementById('modalDocumento').style.display = 'none';
+      if (ultimaBlobURL) { URL.revokeObjectURL(ultimaBlobURL); ultimaBlobURL = null; }
+    }
+
+    function descargarArchivo(idx) {
+      const archivo = archivosTemporales[idx];
+      const link = document.createElement('a');
+      link.href = archivo.contenido;
+      link.download = archivo.nombre_archivo;
+      link.click();
+    }
+
+    function mostrarArchivoDeProyecto(proyectoId, archivoIdx) {
+      const proyecto = proyectos.find(p => p.id === proyectoId);
+      if (!proyecto || !proyecto.archivos || !proyecto.archivos[archivoIdx]) return;
+
+      contextoArchivoActual = { proyectoId, archivoIdx };
+      document.getElementById('btnEliminarDocumento').style.display = 'inline-block';
+
+      const archivo = proyecto.archivos[archivoIdx];
+      document.getElementById('tituloDocumento').textContent = archivo.nombre_archivo;
+      const visor = document.getElementById('visorDocumento');
+      const modal = document.getElementById('modalDocumento');
+      const tipo = tipoDeArchivo(archivo);
+      const tieneContenido = archivo.contenido && archivo.contenido.startsWith('data:');
+      const urlLigera = tieneContenido ? obtenerURLVisualizable(archivo) : null;
+      const btnNuevaPestana = urlLigera ? `<a href="${urlLigera}" target="_blank" rel="noopener" class="btn btn-secondary" style="display: inline-block; margin-top: 0.6rem; text-decoration: none;">↗️ Abrir en pestaña nueva</a>` : '';
+
+      if (tipo === 'pdf') {
+        if (urlLigera) {
+          visor.innerHTML = '<div style="width:100%; height:100%; display:flex; flex-direction:column;"><iframe src="' + urlLigera + '" style="width: 100%; flex:1; border: none;"></iframe><div style="text-align:center; padding:0.5rem; background:#fff;">' + btnNuevaPestana + '</div></div>';
+        } else {
+          visor.innerHTML = `
+            <div style="text-align: center; padding: 2rem; background: white; border-radius: 8px;">
+              <div style="font-size: 48px; margin-bottom: 1rem;">⚠️</div>
+              <div style="font-size: 14px; margin-bottom: 1rem; color: #666;">Este archivo quedó guardado sin su contenido</div>
+              <p style="margin: 0; color: #999; font-size: 12px; max-width: 320px;">Esto pasa con archivos subidos arrastrándolos antes de una mejora reciente. Elimínalo con el botón 🗑️ de arriba y vuelve a subirlo — así queda funcionando bien.</p>
+            </div>
+          `;
+        }
+      } else if (tipo === 'image') {
+        if (urlLigera) {
+          visor.innerHTML = '<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;"><img src="' + urlLigera + '" style="max-width: 100%; max-height: 85%; object-fit: contain;">' + btnNuevaPestana + '</div>';
+        } else {
+          visor.innerHTML = '<p style="text-align: center; color: #999;">⚠️ Esta imagen quedó guardada sin su contenido. Elimínala con el botón 🗑️ de arriba y vuelve a subirla.</p>';
+        }
+      } else if (tipo === 'word') {
+        visor.innerHTML = urlLigera ? `
+          <div style="text-align: center; padding: 2rem; background: white; border-radius: 8px;">
+            <div style="font-size: 48px; margin-bottom: 1rem;">📘</div>
+            <div style="font-size: 14px; margin-bottom: 1rem; color: #666;">Documento Word</div>
+            <p style="margin: 0; color: #999; font-size: 12px;">Los documentos Word no se pueden visualizar directamente aquí.</p>
+            <a href="${urlLigera}" download="${archivo.nombre_archivo}" class="btn btn-primary" style="display: inline-block; margin-top: 1rem; text-decoration: none;">⬇️ Descargar archivo</a>
+          </div>
+        ` : `
+          <div style="text-align: center; padding: 2rem; background: white; border-radius: 8px;">
+            <div style="font-size: 48px; margin-bottom: 1rem;">⚠️</div>
+            <div style="font-size: 14px; margin-bottom: 1rem; color: #666;">Este archivo quedó guardado sin su contenido</div>
+            <p style="margin: 0; color: #999; font-size: 12px; max-width: 320px;">Elimínalo con el botón 🗑️ de arriba y vuelve a subirlo.</p>
+          </div>
+        `;
+      } else {
+        visor.innerHTML = `
+          <div style="text-align: center; padding: 2rem; background: white; border-radius: 8px;">
+            <div style="font-size: 48px; margin-bottom: 1rem;">📄</div>
+            <div style="font-size: 14px; margin-bottom: 1rem; color: #666;">${archivo.tipo}</div>
+            <p style="margin: 0; color: #999; font-size: 12px;">Este tipo de archivo no se puede visualizar aquí.</p>
+            <a href="${archivo.contenido}" download="${archivo.nombre_archivo}" class="btn btn-primary" style="display: inline-block; margin-top: 1rem; text-decoration: none;">⬇️ Descargar archivo</a>
+          </div>
+        `;
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    // GUARDAR PROYECTO
+    async function guardarProyecto(e) {
+      e.preventDefault();
+
+      const tareas = document.getElementById('proyectoTareas').value
+        .split('\n')
+        .filter(t => t.trim())
+        .map((t, i) => ({ id: 't' + (i+1), tarea: t.trim(), completada: false }));
+
+      const proyecto = {
+        id: proyectoEditando?.id || 'proj-' + Date.now(),
+        titulo: document.getElementById('proyectoNombre').value,
+        categoria: document.getElementById('proyectoCategoria').value,
+        estado: document.getElementById('proyectoEstado').value,
+        prioridad: document.getElementById('proyectoPrioridad').value,
+        fecha_inicio: document.getElementById('proyectoFechaInicio').value,
+        fecha_entrega: document.getElementById('proyectoFechaEntrega').value,
+        descripcion: document.getElementById('proyectoDesc').value,
+        vision: document.getElementById('proyectoVision').value,
+        mision: document.getElementById('proyectoMision').value,
+        objetivos: document.getElementById('proyectoObjetivos').value,
+        logo: logoTemporalBase64,
+        checklist: tareas.length > 0 ? tareas : (proyectoEditando?.checklist || []),
+        archivos: archivosTemporales,
+        bitacora_avances: proyectoEditando?.bitacora_avances || []
+      };
+
+      if (proyectoEditando) {
+        const idx = proyectos.findIndex(p => p.id === proyectoEditando.id);
+        if (idx >= 0) {
+          proyectos[idx] = proyecto;
+        }
+      } else {
+        proyectos.push(proyecto);
+      }
+
+      const ok = await guardarProyectosEnDisco();
+      if (ok) {
+        mostrarProyectos();
+        cerrarModal();
+        alert('✅ Proyecto guardado correctamente');
+      }
+    }
+
+    // CERRAR MODAL
+    function cerrarModal() {
+      document.getElementById('modalProyecto').classList.remove('active');
+      archivosTemporales = [];
+      logoTemporalBase64 = '';
+    }
+
+    // ELIMINAR PROYECTO
+    async function eliminarProyecto(id) {
+      if (confirm('¿Estás seguro de que quieres eliminar este proyecto?')) {
+        const respaldo = proyectos;
+        proyectos = proyectos.filter(p => p.id !== id);
+        const ok = await guardarProyectosEnDisco();
+        if (ok) {
+          mostrarProyectos();
+          cerrarModal();
+          alert('✅ Proyecto eliminado correctamente');
+        } else {
+          proyectos = respaldo;
+        }
+      }
+    }
+
+    // FILTRAR PROYECTOS
+    function filtrarProyectos() {
+      mostrarProyectos();
+    }
+
+    // EXPORTAR PDF
+    function exportarPDF(id) {
+      const proyecto = proyectos.find(p => p.id === id);
+      if (!proyecto) return;
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'letter');
+      
+      let yPos = 15;
+      const pageH = doc.internal.pageSize.getHeight();
+      const pageW = doc.internal.pageSize.getWidth();
+      const marginLeft = 15;
+      const marginRight = pageW - 15;
+      const contentWidth = marginRight - marginLeft;
+
+      // LOGO
+      if (proyecto.logo) {
+        try {
+          doc.addImage(proyecto.logo, 'JPEG', pageW / 2 - 15, yPos, 30, 30);
+          yPos += 40;
+        } catch (e) {
+          yPos += 10;
+        }
+      }
+
+      // TÍTULO
+      doc.setFontSize(18);
+      doc.setFont(undefined, 'bold');
+      const titleLines = doc.splitTextToSize(proyecto.titulo, contentWidth - 10);
+      doc.text(titleLines, pageW / 2, yPos, { align: 'center' });
+      yPos += titleLines.length * 6 + 8;
+
+      // FECHA
+      doc.setFontSize(9);
+      doc.setFont(undefined, 'normal');
+      doc.text(`CreaterLab • ${new Date().toLocaleDateString('es-CO')}`, pageW / 2, yPos, { align: 'center' });
+      yPos += 8;
+
+      // LÍNEA SEPARADORA
+      doc.setLineWidth(0.5);
+      doc.line(marginLeft, yPos, marginRight, yPos);
+      yPos += 8;
+
+      // CAMPOS DE DATOS
+      doc.setFontSize(10);
+      
+      const campos = [
+        [`Categoría: ${proyecto.categoria}`, `Estado: ${proyecto.estado}`],
+        [`Prioridad: ${proyecto.prioridad}`, `Inicio: ${proyecto.fecha_inicio || '-'}`],
+        [`Entrega: ${proyecto.fecha_entrega || '-'}`, '']
+      ];
+
+      for (const fila of campos) {
+        doc.setFont(undefined, 'bold');
+        doc.text(fila[0], marginLeft, yPos);
+        if (fila[1]) {
+          doc.text(fila[1], marginLeft + 105, yPos);
+        }
+        yPos += 7;
+      }
+
+      yPos += 5;
+
+      // SECCIONES
+      const secciones = [
+        { titulo: 'DESCRIPCIÓN', texto: proyecto.descripcion },
+        { titulo: 'VISIÓN', texto: proyecto.vision },
+        { titulo: 'MISIÓN', texto: proyecto.mision },
+        { titulo: 'OBJETIVOS', texto: proyecto.objetivos }
+      ];
+
+      for (const sec of secciones) {
+        if (sec.texto) {
+          if (yPos > pageH - 25) {
+            doc.addPage();
+            yPos = 15;
+          }
+
+          doc.setFontSize(11);
+          doc.setFont(undefined, 'bold');
+          doc.text(sec.titulo + ':', marginLeft, yPos);
+          yPos += 8;
+
+          doc.setFontSize(10);
+          doc.setFont(undefined, 'normal');
+          const lineas = doc.splitTextToSize(sec.texto, contentWidth - 5);
+          doc.text(lineas, marginLeft + 2, yPos);
+          yPos += lineas.length * 5 + 8;
+        }
+      }
+
+      // TAREAS
+      if (proyecto.checklist.length > 0) {
+        if (yPos > pageH - 25) {
+          doc.addPage();
+          yPos = 15;
+        }
+
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'bold');
+        doc.text('TAREAS:', marginLeft, yPos);
+        yPos += 8;
+
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+
+        for (const tarea of proyecto.checklist) {
+          if (yPos > pageH - 10) {
+            doc.addPage();
+            yPos = 15;
+          }
+          const lineasTarea = doc.splitTextToSize(`☐ ${tarea.tarea}`, contentWidth - 5);
+          doc.text(lineasTarea, marginLeft + 2, yPos);
+          yPos += lineasTarea.length * 5 + 3;
+        }
+      }
+
+      doc.save(`${proyecto.titulo}-CreaterLab.pdf`);
+    }
+
+    // IMPRIMIR PROYECTO
+    function imprimirProyecto(id) {
+      const proyecto = proyectos.find(p => p.id === id);
+      if (!proyecto) return;
+
+      const ventana = window.open('', '_blank');
+      ventana.document.write(`
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <title>${proyecto.titulo}</title>
+          <style>
+            body { font-family: Arial, sans-serif; color: #333; margin: 20px; }
+            .header { text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #333; padding-bottom: 1rem; }
+            .titulo { font-size: 20px; font-weight: bold; }
+            .logo { max-width: 80px; max-height: 80px; }
+            strong { display: block; margin-top: 1rem; margin-bottom: 0.5rem; }
+            @media print { body { margin: 0; } }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            ${proyecto.logo ? `<img src="${proyecto.logo}" alt="logo" class="logo" style="display:block;margin:1rem auto;">` : ''}
+            <div class="titulo">${proyecto.titulo}</div>
+            <small>CreaterLab • ${new Date().toLocaleDateString('es-CO')}</small>
+          </div>
+
+          <p><strong>Categoría:</strong> ${proyecto.categoria}</p>
+          <p><strong>Estado:</strong> ${proyecto.estado}</p>
+          <p><strong>Prioridad:</strong> ${proyecto.prioridad}</p>
+          <p><strong>Fecha Inicio:</strong> ${proyecto.fecha_inicio || 'Sin fecha'}</p>
+          <p><strong>Fecha Entrega:</strong> ${proyecto.fecha_entrega || 'Sin fecha'}</p>
+
+          ${proyecto.descripcion ? `<p><strong>Descripción:</strong><br>${proyecto.descripcion}</p>` : ''}
+          ${proyecto.vision ? `<p><strong>Visión:</strong><br>${proyecto.vision}</p>` : ''}
+          ${proyecto.mision ? `<p><strong>Misión:</strong><br>${proyecto.mision}</p>` : ''}
+          ${proyecto.objetivos ? `<p><strong>Objetivos:</strong><br>${proyecto.objetivos}</p>` : ''}
+
+          ${proyecto.checklist.length > 0 ? `
+          <p><strong>Tareas:</strong></p>
+          <ul>
+            ${proyecto.checklist.map(t => `<li>${t.tarea}</li>`).join('')}
+          </ul>
+          ` : ''}
+        </body>
+        </html>
+      `);
+      ventana.document.close();
+      ventana.print();
+    }
+
+    // MOSTRAR PROYECTOS
+    function mostrarProyectos() {
+      const categoria = document.getElementById('filtroCategoria').value;
+      const estado = document.getElementById('filtroEstado').value;
+
+      let filtrados = proyectos;
+      if (categoria) {
+        filtrados = filtrados.filter(p => p.categoria === categoria);
+      }
+      if (estado) {
+        filtrados = filtrados.filter(p => p.estado === estado);
+      }
+
+      const grid = document.getElementById('proyectosGrid');
+      if (filtrados.length === 0) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><p>No hay proyectos que coincidan con los filtros.</p></div>';
+        return;
+      }
+
+      grid.innerHTML = filtrados.map(p => {
+        const completados = p.checklist.filter(t => t.completada).length;
+        const total = p.checklist.length;
+        return `
+          <div class="proyecto-card">
+            <div class="proyecto-header">
+              <div>
+                <div class="proyecto-titulo">${p.titulo}</div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                  <span class="badge badge-categoria">${p.categoria}</span>
+                  <span class="badge badge-estado">${p.estado}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="proyecto-desc">${p.descripcion}</div>
+            
+            ${p.archivos && p.archivos.length > 0 ? `
+            <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #e0e0e0;">
+              <div style="font-size: 12px; font-weight: bold; color: #666; margin-bottom: 0.5rem;">📎 Archivos (${p.archivos.length})</div>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                ${p.archivos.slice(0, 3).map((arch, idx) => {
+                  let icono = '📄';
+                  if (arch.tipo.includes('pdf')) icono = '📕';
+                  if (arch.tipo.includes('word') || arch.tipo.includes('document')) icono = '📘';
+                  if (arch.tipo.includes('image')) icono = '🖼️';
+                  return `<span style="background: #f0f0f0; padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 11px; cursor: pointer;" title="${arch.nombre_archivo}" onclick="mostrarArchivoDeProyecto('${p.id}', ${idx})">${icono}</span>`;
+                }).join('')}
+                ${p.archivos.length > 3 ? `<span style="background: #e0e0e0; padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 11px;">+${p.archivos.length - 3}</span>` : ''}
+              </div>
+            </div>
+            ` : ''}
+            
+            <div class="proyecto-meta">
+              <span>📅 Inicio: ${p.fecha_inicio || 'Sin fecha'}</span>
+              <span>🎯 Entrega: ${p.fecha_entrega || 'Sin fecha'}</span>
+              <span>✓ ${completados}/${total} tareas</span>
+              <span style="text-transform: uppercase;">${p.prioridad}</span>
+            </div>
+
+            <div class="proyecto-acciones">
+              <button class="btn-small" onclick="editarProyecto('${p.id}')">✏️ Editar</button>
+              <button class="btn-small btn-pdf" onclick="exportarPDF('${p.id}')">📄 PDF</button>
+              <button class="btn-small btn-print" onclick="imprimirProyecto('${p.id}')">🖨️ Imprimir</button>
+              <button class="btn-small btn-delete" onclick="eliminarProyecto('${p.id}')">🗑️ Eliminar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(err => console.error("Service worker no registrado:", err));
+  });
+}
+</script>
+</body>
+</html>

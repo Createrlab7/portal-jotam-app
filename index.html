@@ -876,6 +876,15 @@
         document.getElementById('btnInstalarApp').style.display = 'inline-block';
       }
 
+      // Respaldo: si en unos segundos no llegó el aviso automático de Chrome, mostramos el botón igual
+      // (al tocarlo, si no hay instalador automático disponible, explica cómo hacerlo manual)
+      setTimeout(() => {
+        const btn = document.getElementById('btnInstalarApp');
+        if (btn.style.display === 'none' && !appYaInstalada() && !esIOS()) {
+          btn.style.display = 'inline-block';
+        }
+      }, 2500);
+
       pintarPantallaLock();
       ['lockPasswordInput', 'lockPasswordConfirm'].forEach(id => {
         document.getElementById(id).addEventListener('keydown', (e) => {

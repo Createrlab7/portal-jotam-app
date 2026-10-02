@@ -531,7 +531,20 @@
 
       <button id="lockActionBtn" onclick="manejarAccionCandado()" style="width:100%; padding:12px; border-radius:8px; border:none; background:#2563EB; color:#fff; font-size:15px; cursor:pointer; font-family:sans-serif; margin-bottom:14px;">Entrar</button>
 
-      <a href="#" id="lockForgotLink" onclick="olvidoContrasena(); return false;" style="color:#36CBCF; font-family:sans-serif; font-size:12px; text-decoration:none;">¿Olvidaste tu contraseña?</a>
+      <a href="#" id="lockForgotLink" onclick="olvidoContrasena(); return false;" style="color:#60A5FA; font-family:sans-serif; font-size:12px; text-decoration:none;">¿Olvidaste tu contraseña?</a>
+    </div>
+  </div>
+
+  <div id="modalInstalarIOS" style="display:none; position:fixed; inset:0; z-index:99998; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; padding:20px;">
+    <div style="max-width:340px; width:100%; background:var(--card-bg); border-radius:14px; padding:24px; text-align:center; font-family:sans-serif;">
+      <div style="font-size:40px; margin-bottom:10px;">📲</div>
+      <h3 style="color:var(--text-primary); margin-bottom:14px;">Instalar en iPhone/iPad</h3>
+      <p style="color:var(--text-secondary); font-size:14px; text-align:left; line-height:1.6; margin-bottom:18px;">
+        1. Toca el botón <b>Compartir</b> (el cuadrito con la flecha hacia arriba) en la barra de Safari.<br><br>
+        2. Busca y toca <b>"Agregar a pantalla de inicio"</b>.<br><br>
+        3. Confirma — el ícono quedará en tu pantalla, como cualquier app.
+      </p>
+      <button class="btn btn-primary" onclick="document.getElementById('modalInstalarIOS').style.display='none'" style="width:100%;">Entendido</button>
     </div>
   </div>
 
@@ -549,6 +562,7 @@
       <input type="file" id="importFile" accept="application/json,.json,text/plain,text/json" style="display:none">
       <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" title="Carga un respaldo exportado antes, en este u otro dispositivo">📂 Importar respaldo</button>
       <button class="btn btn-secondary" onclick="cambiarContrasena()" title="Cambiar tu contraseña de acceso">🔑 Cambiar contraseña</button>
+      <button class="btn btn-secondary" id="btnInstalarApp" onclick="instalarApp()" title="Instala esta app en tu PC o celular" style="display:none;">📲 Instalar app</button>
     </div>
   </div>
 
@@ -563,11 +577,12 @@
         <label>Categoría</label>
         <select id="filtroCategoria" onchange="filtrarProyectos()">
           <option value="">Todas</option>
-          <option value="Producción Audiovisual">Producción Audiovisual</option>
-          <option value="Diseño & Branding">Diseño & Branding</option>
-          <option value="Asesoría Externa">Asesoría Externa</option>
-          <option value="Formación & Estudio">Formación & Estudio</option>
-          <option value="Proyectos Personales">Proyectos Personales</option>
+          <option value="Comercial">Comercial</option>
+          <option value="Servicios">Servicios</option>
+          <option value="Carpintería">Carpintería</option>
+          <option value="Culinaria">Culinaria</option>
+          <option value="Logística">Logística</option>
+          <option value="Otros">Otros</option>
         </select>
       </div>
       <div class="filtro-grupo">
@@ -613,14 +628,17 @@
           </div>
           <div class="form-group">
             <label>Categoría *</label>
-            <select id="proyectoCategoria" required>
+            <select id="proyectoCategoria" required onchange="manejarCategoriaPersonalizada()">
               <option value="">Selecciona categoría</option>
-              <option value="Producción Audiovisual">Producción Audiovisual</option>
-              <option value="Diseño & Branding">Diseño & Branding</option>
-              <option value="Asesoría Externa">Asesoría Externa</option>
-              <option value="Formación & Estudio">Formación & Estudio</option>
-              <option value="Proyectos Personales">Proyectos Personales</option>
+              <option value="Comercial">Comercial</option>
+              <option value="Servicios">Servicios</option>
+              <option value="Carpintería">Carpintería</option>
+              <option value="Culinaria">Culinaria</option>
+              <option value="Logística">Logística</option>
+              <option value="Otros">Otros</option>
+              <option value="__personalizada__">✏️ Escribir otra categoría...</option>
             </select>
+            <input type="text" id="proyectoCategoriaPersonalizada" placeholder="Escribe la categoría" style="display:none; margin-top:8px;">
           </div>
         </div>
 
@@ -815,7 +833,49 @@
       alert('✅ Contraseña actualizada correctamente.');
     }
 
+    // ===== INSTALAR LA APP (Android/PC directo, iPhone con instrucciones) =====
+    let promptDeInstalacion = null;
+
+    function appYaInstalada() {
+      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    }
+
+    function esIOS() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      promptDeInstalacion = e;
+      if (!appYaInstalada()) {
+        document.getElementById('btnInstalarApp').style.display = 'inline-block';
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      document.getElementById('btnInstalarApp').style.display = 'none';
+      promptDeInstalacion = null;
+    });
+
+    async function instalarApp() {
+      if (promptDeInstalacion) {
+        promptDeInstalacion.prompt();
+        await promptDeInstalacion.userChoice;
+        promptDeInstalacion = null;
+        document.getElementById('btnInstalarApp').style.display = 'none';
+      } else if (esIOS()) {
+        document.getElementById('modalInstalarIOS').style.display = 'flex';
+      } else {
+        alert('Para instalar: busca el ícono de instalación en la barra de direcciones de tu navegador, o el menú (⋮) → "Instalar app".');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      // En iPhone no existe "beforeinstallprompt", así que mostramos el botón igual (lleva a las instrucciones)
+      if (esIOS() && !appYaInstalada()) {
+        document.getElementById('btnInstalarApp').style.display = 'inline-block';
+      }
+
       pintarPantallaLock();
       ['lockPasswordInput', 'lockPasswordConfirm'].forEach(id => {
         document.getElementById(id).addEventListener('keydown', (e) => {
@@ -952,8 +1012,8 @@
     // EXPORTAR JSON
     function exportarJSON() {
       const datos = {
-        usuario: "Elsa Osuna",
-        nombre_estudio: "CreaterLab",
+        usuario: "Jota M. Guisao Tabares",
+        nombre_estudio: "Portal JM",
         fecha_exportacion: new Date().toISOString(),
         proyectos: proyectos
       };
@@ -963,11 +1023,24 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `CreaterLab-Proyectos-${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `PortalJM-Proyectos-${new Date().toISOString().split('T')[0]}.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+    }
+
+    // Muestra la casilla de texto cuando se elige "Escribir otra categoría..."
+    function manejarCategoriaPersonalizada() {
+      const select = document.getElementById('proyectoCategoria');
+      const campo = document.getElementById('proyectoCategoriaPersonalizada');
+      if (select.value === '__personalizada__') {
+        campo.style.display = 'block';
+        campo.focus();
+      } else {
+        campo.style.display = 'none';
+        campo.value = '';
+      }
     }
 
     // NUEVO PROYECTO
@@ -976,6 +1049,7 @@
       logoTemporalBase64 = '';
       document.getElementById('modalTitulo').textContent = 'Nuevo Proyecto';
       document.getElementById('formProyecto').reset();
+      document.getElementById('proyectoCategoriaPersonalizada').style.display = 'none';
       archivosTemporales = [];
       document.getElementById('listaArchivos').innerHTML = '';
       document.getElementById('logoPreview').innerHTML = '';
@@ -992,7 +1066,18 @@
       logoTemporalBase64 = proyectoEditando.logo || '';
       document.getElementById('modalTitulo').textContent = 'Editar Proyecto';
       document.getElementById('proyectoNombre').value = proyectoEditando.titulo;
-      document.getElementById('proyectoCategoria').value = proyectoEditando.categoria;
+      const catSelect = document.getElementById('proyectoCategoria');
+      const catPersonalizada = document.getElementById('proyectoCategoriaPersonalizada');
+      const opcionesFijas = Array.from(catSelect.options).map(o => o.value);
+      if (opcionesFijas.includes(proyectoEditando.categoria)) {
+        catSelect.value = proyectoEditando.categoria;
+        catPersonalizada.style.display = 'none';
+        catPersonalizada.value = '';
+      } else {
+        catSelect.value = '__personalizada__';
+        catPersonalizada.style.display = 'block';
+        catPersonalizada.value = proyectoEditando.categoria || '';
+      }
       document.getElementById('proyectoDesc').value = proyectoEditando.descripcion;
       document.getElementById('proyectoVision').value = proyectoEditando.vision || '';
       document.getElementById('proyectoMision').value = proyectoEditando.mision || '';
@@ -1316,7 +1401,9 @@
       const proyecto = {
         id: proyectoEditando?.id || 'proj-' + Date.now(),
         titulo: document.getElementById('proyectoNombre').value,
-        categoria: document.getElementById('proyectoCategoria').value,
+        categoria: document.getElementById('proyectoCategoria').value === '__personalizada__'
+          ? (document.getElementById('proyectoCategoriaPersonalizada').value.trim() || 'Otros')
+          : document.getElementById('proyectoCategoria').value,
         estado: document.getElementById('proyectoEstado').value,
         prioridad: document.getElementById('proyectoPrioridad').value,
         fecha_inicio: document.getElementById('proyectoFechaInicio').value,

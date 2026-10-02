@@ -1007,7 +1007,7 @@
               mostrarProyectos();
               if (ok) alert('✅ Proyectos importados correctamente');
             } else {
-              alert('❌ Este archivo no tiene el formato esperado de un respaldo de CreaterLab.');
+              alert('❌ Este archivo no tiene el formato esperado de un respaldo válido.');
             }
           } catch (err) {
             alert('❌ Error al leer el archivo JSON');
@@ -1507,7 +1507,7 @@
       // FECHA
       doc.setFontSize(9);
       doc.setFont(undefined, 'normal');
-      doc.text(`CreaterLab • ${new Date().toLocaleDateString('es-CO')}`, pageW / 2, yPos, { align: 'center' });
+      doc.text(new Date().toLocaleDateString('es-CO'), pageW / 2, yPos, { align: 'center' });
       yPos += 8;
 
       // LÍNEA SEPARADORA
@@ -1589,7 +1589,7 @@
         }
       }
 
-      doc.save(`${proyecto.titulo}-CreaterLab.pdf`);
+      doc.save(`${proyecto.titulo}.pdf`);
     }
 
     // IMPRIMIR PROYECTO
@@ -1617,7 +1617,7 @@
           <div class="header">
             ${proyecto.logo ? `<img src="${proyecto.logo}" alt="logo" class="logo" style="display:block;margin:1rem auto;">` : ''}
             <div class="titulo">${proyecto.titulo}</div>
-            <small>CreaterLab • ${new Date().toLocaleDateString('es-CO')}</small>
+            <small>${new Date().toLocaleDateString('es-CO')}</small>
           </div>
 
           <p><strong>Categoría:</strong> ${proyecto.categoria}</p>

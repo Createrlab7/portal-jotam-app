@@ -564,12 +564,6 @@
         <label>Categoría</label>
         <select id="filtroCategoria" onchange="filtrarProyectos()">
           <option value="">Todas</option>
-          <option value="Comercial">Comercial</option>
-          <option value="Servicios">Servicios</option>
-          <option value="Carpintería">Carpintería</option>
-          <option value="Culinaria">Culinaria</option>
-          <option value="Logística">Logística</option>
-          <option value="Otros">Otros</option>
         </select>
       </div>
       <div class="filtro-grupo">
@@ -617,13 +611,6 @@
             <label>Categoría *</label>
             <select id="proyectoCategoria" required onchange="manejarCategoriaPersonalizada()">
               <option value="">Selecciona categoría</option>
-              <option value="Comercial">Comercial</option>
-              <option value="Servicios">Servicios</option>
-              <option value="Carpintería">Carpintería</option>
-              <option value="Culinaria">Culinaria</option>
-              <option value="Logística">Logística</option>
-              <option value="Otros">Otros</option>
-              <option value="__personalizada__">✏️ Escribir otra categoría...</option>
             </select>
             <input type="text" id="proyectoCategoriaPersonalizada" placeholder="Escribe la categoría" style="display:none; margin-top:8px;">
           </div>
@@ -907,6 +894,66 @@
       });
     });
 
+    // ===== CATEGORÍAS DINÁMICAS =====
+    const CATEGORIAS_BASE = ['Comercial', 'Servicios', 'Carpintería', 'Culinaria', 'Logística', 'Otros'];
+
+    // Clave para comparar categorías sin importar mayúsculas ni espacios sobrantes
+    function normalizarClaveCategoria(cat) {
+      return (cat || '').trim().toLowerCase();
+    }
+
+    // Devuelve: categorías base + todas las personalizadas que existan hoy en los proyectos, sin duplicados
+    function obtenerCategoriasDinamicas() {
+      const vistas = new Set(CATEGORIAS_BASE.map(normalizarClaveCategoria));
+      const personalizadas = [];
+      proyectos.forEach(p => {
+        const cat = (p.categoria || '').trim();
+        if (!cat) return;
+        const clave = normalizarClaveCategoria(cat);
+        if (!vistas.has(clave)) {
+          vistas.add(clave);
+          personalizadas.push(cat);
+        }
+      });
+      return [...CATEGORIAS_BASE, ...personalizadas];
+    }
+
+    // Decide qué texto final guardar para una categoría escrita a mano:
+    // si ya existe una igual (ignorando mayúsculas/espacios), reutiliza esa forma exacta para no duplicar
+    function resolverCategoria(catEscrita) {
+      const clave = normalizarClaveCategoria(catEscrita);
+      if (!clave) return 'Otros';
+      const existente = obtenerCategoriasDinamicas().find(c => normalizarClaveCategoria(c) === clave);
+      return existente || catEscrita.trim();
+    }
+
+    // Reconstruye el <select> del filtro de la pantalla principal, conservando la selección actual si sigue existiendo
+    function renderizarFiltroCategoria() {
+      const select = document.getElementById('filtroCategoria');
+      const actual = select.value;
+      const categorias = obtenerCategoriasDinamicas();
+      select.innerHTML = '<option value="">Todas</option>' +
+        categorias.map(c => `<option value="${c}">${c}</option>`).join('');
+      if (categorias.some(c => c === actual)) {
+        select.value = actual;
+      }
+    }
+
+    // Reconstruye el <select> del formulario Nuevo/Editar Proyecto
+    function renderizarCategoriasFormulario(seleccionActual) {
+      const select = document.getElementById('proyectoCategoria');
+      const categorias = obtenerCategoriasDinamicas();
+      select.innerHTML = '<option value="">Selecciona categoría</option>' +
+        categorias.map(c => `<option value="${c}">${c}</option>`).join('') +
+        '<option value="__personalizada__">✏️ Escribir otra categoría...</option>';
+      const campoPersonalizada = document.getElementById('proyectoCategoriaPersonalizada');
+      campoPersonalizada.style.display = 'none';
+      campoPersonalizada.value = '';
+      if (seleccionActual) {
+        select.value = seleccionActual;
+      }
+    }
+
     let proyectos = [];
     let proyectoEditando = null;
     let archivosTemporales = [];
@@ -994,7 +1041,7 @@
       logoTemporalBase64 = '';
       document.getElementById('modalTitulo').textContent = 'Nuevo Proyecto';
       document.getElementById('formProyecto').reset();
-      document.getElementById('proyectoCategoriaPersonalizada').style.display = 'none';
+      renderizarCategoriasFormulario('');
       archivosTemporales = [];
       document.getElementById('listaArchivos').innerHTML = '';
       document.getElementById('logoPreview').innerHTML = '';
@@ -1011,18 +1058,7 @@
       logoTemporalBase64 = proyectoEditando.logo || '';
       document.getElementById('modalTitulo').textContent = 'Editar Proyecto';
       document.getElementById('proyectoNombre').value = proyectoEditando.titulo;
-      const catSelect = document.getElementById('proyectoCategoria');
-      const catPersonalizada = document.getElementById('proyectoCategoriaPersonalizada');
-      const opcionesFijas = Array.from(catSelect.options).map(o => o.value);
-      if (opcionesFijas.includes(proyectoEditando.categoria)) {
-        catSelect.value = proyectoEditando.categoria;
-        catPersonalizada.style.display = 'none';
-        catPersonalizada.value = '';
-      } else {
-        catSelect.value = '__personalizada__';
-        catPersonalizada.style.display = 'block';
-        catPersonalizada.value = proyectoEditando.categoria || '';
-      }
+      renderizarCategoriasFormulario(proyectoEditando.categoria);
       document.getElementById('proyectoDesc').value = proyectoEditando.descripcion;
       document.getElementById('proyectoVision').value = proyectoEditando.vision || '';
       document.getElementById('proyectoMision').value = proyectoEditando.mision || '';
@@ -1347,7 +1383,7 @@
         id: proyectoEditando?.id || 'proj-' + Date.now(),
         titulo: document.getElementById('proyectoNombre').value,
         categoria: document.getElementById('proyectoCategoria').value === '__personalizada__'
-          ? (document.getElementById('proyectoCategoriaPersonalizada').value.trim() || 'Otros')
+          ? resolverCategoria(document.getElementById('proyectoCategoriaPersonalizada').value)
           : document.getElementById('proyectoCategoria').value,
         estado: document.getElementById('proyectoEstado').value,
         prioridad: document.getElementById('proyectoPrioridad').value,
@@ -1582,6 +1618,7 @@
 
     // MOSTRAR PROYECTOS
     function mostrarProyectos() {
+      renderizarFiltroCategoria();
       const categoria = document.getElementById('filtroCategoria').value;
       const estado = document.getElementById('filtroEstado').value;
 

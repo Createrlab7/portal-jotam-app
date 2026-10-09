@@ -1555,9 +1555,20 @@
             doc.addPage();
             yPos = 15;
           }
-          const lineasTarea = doc.splitTextToSize(`☐ ${tarea.tarea}`, contentWidth - 5);
-          doc.text(lineasTarea, marginLeft + 2, yPos);
-          yPos += lineasTarea.length * 5 + 3;
+          // El símbolo ☐ no existe en la fuente del PDF y rompía el texto (letras separadas y fuera de margen).
+          // Se dibuja la casilla como un cuadro y el texto va limpio, dentro del margen.
+          const textoTarea = String(tarea.tarea || '').replace(/[^\u0000-ÿ]/g, '').trim();
+          const lineasTarea = doc.splitTextToSize(textoTarea, contentWidth - 14);
+          const altoTarea = lineasTarea.length * 5 + 3;
+          if (yPos + altoTarea > pageH - 10) {
+            doc.addPage();
+            yPos = 15;
+          }
+          doc.setDrawColor(80, 80, 80);
+          doc.setLineWidth(0.3);
+          doc.rect(marginLeft + 2, yPos - 3.2, 3.5, 3.5);
+          doc.text(lineasTarea, marginLeft + 9, yPos);
+          yPos += altoTarea;
         }
       }
 

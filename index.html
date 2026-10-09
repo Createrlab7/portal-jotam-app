@@ -51,6 +51,31 @@
       transition: background 0.3s ease, color 0.3s ease;
     }
 
+
+    /* ===== Fondo personalizado sutil (red de proyectos/ideas) — detrás de las tarjetas ===== */
+    body { position: relative; isolation: isolate; }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image:
+        radial-gradient(900px 500px at 8% -5%, rgba(37, 99, 235, 0.22), transparent 70%),
+        radial-gradient(800px 500px at 100% 100%, rgba(96, 165, 250, 0.14), transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22360%22 height=%22360%22 viewBox=%220 0 360 360%22%3E%3Cg fill=%22none%22 stroke=%22%232563EB%22 stroke-width=%221.2%22 stroke-opacity=%220.2%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M30 60 L110 30 L190 80 L270 40 L330 100%22/%3E%3Cpath d=%22M110 30 L130 120 L190 80%22/%3E%3Cpath d=%22M130 120 L60 190 L150 230 L240 190 L330 100%22/%3E%3Cpath d=%22M150 230 L120 320 M240 190 L290 280 L220 335%22/%3E%3Cpath d=%22M60 190 L20 280%22/%3E%3C/g%3E%3Cg fill=%22%232563EB%22 fill-opacity=%220.28%22%3E%3Ccircle cx=%2230%22 cy=%2260%22 r=%223.2%22/%3E%3Ccircle cx=%22110%22 cy=%2230%22 r=%224%22/%3E%3Ccircle cx=%22190%22 cy=%2280%22 r=%223.2%22/%3E%3Ccircle cx=%22270%22 cy=%2240%22 r=%223.2%22/%3E%3Ccircle cx=%22330%22 cy=%22100%22 r=%224%22/%3E%3Ccircle cx=%22130%22 cy=%22120%22 r=%223.2%22/%3E%3Ccircle cx=%2260%22 cy=%22190%22 r=%224%22/%3E%3Ccircle cx=%22150%22 cy=%22230%22 r=%223.2%22/%3E%3Ccircle cx=%22240%22 cy=%22190%22 r=%224%22/%3E%3Ccircle cx=%22120%22 cy=%22320%22 r=%223.2%22/%3E%3Ccircle cx=%22290%22 cy=%22280%22 r=%223.2%22/%3E%3Ccircle cx=%22220%22 cy=%22335%22 r=%224%22/%3E%3Ccircle cx=%2220%22 cy=%22280%22 r=%223.2%22/%3E%3C/g%3E%3C/svg%3E");
+      background-size: auto, auto, 360px 360px;
+      transition: opacity 0.3s ease;
+    }
+    body.light-mode::before {
+      background-image:
+        radial-gradient(900px 500px at 8% -5%, rgba(37, 99, 235, 0.10), transparent 70%),
+        radial-gradient(800px 500px at 100% 100%, rgba(96, 165, 250, 0.12), transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22360%22 height=%22360%22 viewBox=%220 0 360 360%22%3E%3Cg fill=%22none%22 stroke=%22%232563EB%22 stroke-width=%221.2%22 stroke-opacity=%220.14%22 stroke-linecap=%22round%22%3E%3Cpath d=%22M30 60 L110 30 L190 80 L270 40 L330 100%22/%3E%3Cpath d=%22M110 30 L130 120 L190 80%22/%3E%3Cpath d=%22M130 120 L60 190 L150 230 L240 190 L330 100%22/%3E%3Cpath d=%22M150 230 L120 320 M240 190 L290 280 L220 335%22/%3E%3Cpath d=%22M60 190 L20 280%22/%3E%3C/g%3E%3Cg fill=%22%232563EB%22 fill-opacity=%220.2%22%3E%3Ccircle cx=%2230%22 cy=%2260%22 r=%223.2%22/%3E%3Ccircle cx=%22110%22 cy=%2230%22 r=%224%22/%3E%3Ccircle cx=%22190%22 cy=%2280%22 r=%223.2%22/%3E%3Ccircle cx=%22270%22 cy=%2240%22 r=%223.2%22/%3E%3Ccircle cx=%22330%22 cy=%22100%22 r=%224%22/%3E%3Ccircle cx=%22130%22 cy=%22120%22 r=%223.2%22/%3E%3Ccircle cx=%2260%22 cy=%22190%22 r=%224%22/%3E%3Ccircle cx=%22150%22 cy=%22230%22 r=%223.2%22/%3E%3Ccircle cx=%22240%22 cy=%22190%22 r=%224%22/%3E%3Ccircle cx=%22120%22 cy=%22320%22 r=%223.2%22/%3E%3Ccircle cx=%22290%22 cy=%22280%22 r=%223.2%22/%3E%3Ccircle cx=%22220%22 cy=%22335%22 r=%224%22/%3E%3Ccircle cx=%2220%22 cy=%22280%22 r=%223.2%22/%3E%3C/g%3E%3C/svg%3E");
+      background-size: auto, auto, 360px 360px;
+    }
+    @media print { body::before { display: none; } }
+
     .theme-toggle {
       background: none;
       border: 2px solid var(--teal);

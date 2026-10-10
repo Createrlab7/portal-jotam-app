@@ -1452,10 +1452,17 @@
     async function guardarProyecto(e) {
       e.preventDefault();
 
+      // Al editar, las tareas que siguen iguales conservan su casilla marcada
+      const previas = ((proyectoEditando && proyectoEditando.checklist) || []).map(t => ({ tarea: t.tarea, completada: !!t.completada, usada: false }));
       const tareas = document.getElementById('proyectoTareas').value
         .split('\n')
         .filter(t => t.trim())
-        .map((t, i) => ({ id: 't' + (i+1), tarea: t.trim(), completada: false }));
+        .map((t, i) => {
+          const txt = t.trim();
+          const prev = previas.find(x => !x.usada && x.tarea === txt);
+          if (prev) prev.usada = true;
+          return { id: 't' + (i+1), tarea: txt, completada: prev ? prev.completada : false };
+        });
 
       const proyecto = {
         id: proyectoEditando?.id || 'proj-' + Date.now(),
@@ -1536,10 +1543,44 @@
       });
 
       if (p.checklist && p.checklist.length) {
-        cont.appendChild(etiqueta('Tareas (' + p.checklist.length + ')'));
-        const ul = el('ul', 'margin:0; padding-left:1.2rem; font-size:14px; line-height:1.6; color:var(--text-primary);');
-        p.checklist.forEach(t => ul.appendChild(el('li', 'overflow-wrap:anywhere;', t.tarea)));
-        cont.appendChild(ul);
+        const total = p.checklist.length;
+        const cab = etiqueta('Tareas');
+        const prog = el('span', 'margin-left:0.6rem; text-transform:none; letter-spacing:0; font-weight:600; color:var(--teal);', '');
+        cab.appendChild(prog);
+        cont.appendChild(cab);
+        const barra = el('div', 'height:6px; border-radius:3px; background:var(--border-color); margin:0.2rem 0 0.7rem; overflow:hidden;');
+        const relleno = el('div', 'height:100%; background:var(--teal); transition:width 0.25s;');
+        barra.appendChild(relleno);
+        cont.appendChild(barra);
+        const actualizar = () => {
+          const c = p.checklist.filter(t => t.completada).length;
+          prog.textContent = c + ' de ' + total + ' completadas';
+          relleno.style.width = (c * 100 / total) + '%';
+        };
+        const estiloTexto = (t) => t.completada ? 'text-decoration:line-through; opacity:0.6;' : '';
+        const lista = el('div', 'display:flex; flex-direction:column; gap:0.45rem;');
+        p.checklist.forEach((t) => {
+          const fila = document.createElement('label');
+          fila.style.cssText = 'display:flex; gap:0.6rem; align-items:flex-start; cursor:pointer; font-size:14px; line-height:1.5; color:var(--text-primary); overflow-wrap:anywhere;';
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.checked = !!t.completada;
+          cb.style.cssText = 'margin-top:0.25rem; width:18px; height:18px; flex:0 0 auto; accent-color:#2563EB; cursor:pointer;';
+          const tx = el('span', estiloTexto(t), t.tarea);
+          cb.onchange = async () => {
+            t.completada = cb.checked;
+            tx.style.cssText = estiloTexto(t);
+            actualizar();
+            const ok = await guardarProyectosEnDisco();
+            if (!ok) { t.completada = !cb.checked; cb.checked = t.completada; tx.style.cssText = estiloTexto(t); actualizar(); }
+            mostrarProyectos();
+          };
+          fila.appendChild(cb);
+          fila.appendChild(tx);
+          lista.appendChild(fila);
+        });
+        cont.appendChild(lista);
+        actualizar();
       }
 
       if (p.archivos && p.archivos.length) {
@@ -1727,6 +1768,12 @@
           doc.setDrawColor(80, 80, 80);
           doc.setLineWidth(0.3);
           doc.rect(marginLeft + 2, yPos - 3.2, 3.5, 3.5);
+          if (tarea.completada) {
+            doc.setLineWidth(0.6);
+            doc.line(marginLeft + 2.7, yPos - 1.4, marginLeft + 3.5, yPos - 0.5);
+            doc.line(marginLeft + 3.5, yPos - 0.5, marginLeft + 5.0, yPos - 2.8);
+            doc.setLineWidth(0.3);
+          }
           doc.text(lineasTarea, marginLeft + 9, yPos);
           yPos += altoTarea;
         }
@@ -1777,7 +1824,7 @@
           ${proyecto.checklist.length > 0 ? `
           <p><strong>Tareas:</strong></p>
           <ul>
-            ${proyecto.checklist.map(t => `<li>${t.tarea}</li>`).join('')}
+            ${proyecto.checklist.map(t => `<li${t.completada ? ' style="text-decoration:line-through; color:#888;"' : ''}>${t.completada ? '✔ ' : ''}${t.tarea}</li>`).join('')}
           </ul>
           ` : ''}
         </body>
